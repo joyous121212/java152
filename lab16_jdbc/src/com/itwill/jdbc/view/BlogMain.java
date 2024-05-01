@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import com.itwill.jdbc.controller.BlogDao;
 import com.itwill.jdbc.model.Blog;
 import com.itwill.jdbc.view.BlogCreateFrame.CreateNotify;
+import com.itwill.jdbc.view.BlogDetailsFrame.UpdateNotify;
 
 import java.awt.Font;
 import java.util.List;
@@ -24,7 +25,7 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class BlogMain implements CreateNotify {
+public class BlogMain implements CreateNotify, UpdateNotify {
 	private static final String[] SEARCH_TYPES = {
 			"제목", "내용", "제목+내용", "작성자"
 	};
@@ -120,6 +121,7 @@ public class BlogMain implements CreateNotify {
 		buttonPanel.add(btnCreate);
 		
 		btnDetails = new JButton("상세보기");
+		btnDetails.addActionListener((e) -> showDetailsFrame());
 		btnDetails.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		buttonPanel.add(btnDetails);
 		
@@ -137,6 +139,19 @@ public class BlogMain implements CreateNotify {
 		scrollPane.setViewportView(table);
 	}
 	
+	private void showDetailsFrame() {
+		int index = table.getSelectedRow(); // 테이블에서 선택된 행의 인덱스
+		if (index == -1) {
+			JOptionPane.showMessageDialog(frame, "상세보기할 행을 먼저 선택하세요.", 
+					"경고", JOptionPane.WARNING_MESSAGE);
+			
+			return;
+		}
+		Integer id = (Integer) tableModel.getValueAt(index, 0);
+		
+		BlogDetailsFrame.showBlogDetailsFrame(frame, id, BlogMain.this);
+	}
+
 	private void search() {
 		int type = comboBox.getSelectedIndex(); // 콤보박스에서 선택된 아이템의 인덱스
 		String keyword = textSearchKeyword.getText(); // 검색어
@@ -214,6 +229,14 @@ public class BlogMain implements CreateNotify {
 		// BlogCreateFrame에서 테이블에 insert 성공했을 때 BlogCreateFrame이 호출하는 메서드.
 		initializeTable();
 		JOptionPane.showMessageDialog(frame, "새 블로그 등록 성공!");
+	}
+
+	@Override
+	public void notifyUpdateSuccess() {
+		// 테이블에 update 성공했을 때 BlogDetailsFrame이 호출하는 메서드.
+        initializeTable();
+        JOptionPane.showMessageDialog(frame, "블로그 업데이트 성공!");
+		
 	}
 
 }
