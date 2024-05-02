@@ -91,6 +91,11 @@ public class RentalMain implements CreateNotify {
 		frame.getContentPane().add(lblTitle);
 		
 		btnManager = new JButton("관리자");
+		btnManager.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RentalManagerDialog.showRentalManagerDialog();
+			}
+		});
 		btnManager.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		btnManager.setBounds(251, 367, 159, 43);
 		frame.getContentPane().add(btnManager);

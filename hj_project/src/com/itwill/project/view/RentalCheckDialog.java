@@ -52,7 +52,7 @@ public class RentalCheckDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public RentalCheckDialog() {
-		setBounds(100, 100, 450, 218);
+		setBounds(100, 100, 444, 219);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
