@@ -63,7 +63,6 @@ public class BlogDao {
 	 * CRUD 메서드들에서 사용했던 리소스들을 해제
 	 * @param conn Connection 객체
 	 * @param stmt Statement 객체
-	 * @param rs ResultSet 객체
 	 */
 	private void closeResources(Connection conn, Statement stmt) {
 		closeResources(conn, stmt, null);
@@ -87,7 +86,7 @@ public class BlogDao {
 	private static final String SQL_SELECT_ALL = String.format("select * from %s order by %s desc", TBL_BLOGS, COL_ID);
 	
 	/**
-	 * 데이터베이스 테이블 BLOSG 테이블에서 모든 레코드(행)를 검색해서 
+	 * 데이터베이스 테이블 BLOGS 테이블에서 모든 레코드(행)를 검색해서 
 	 * ID(고유키)의 내림차순으로 정렬된 리스트를 반환.
 	 * 테이블에 행이 없는 경우 빈 리스트를 리턴.
 	 * @return Blog를 원소로 갖는 ArrayList.

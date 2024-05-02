@@ -52,6 +52,7 @@ public class RentalDetailFrame extends JFrame {
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnBefore;
 	private JButton btnConfirm;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -139,7 +140,7 @@ public class RentalDetailFrame extends JFrame {
 		lblContent.setBounds(12, 184, 410, 48);
 		contentPane.add(lblContent);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(12, 230, 410, 129);
 		contentPane.add(scrollPane);
 		

@@ -88,6 +88,18 @@ public class RentalDao {
 		return rental;
 	}
 	
+	//ResultSet에서 각 컬럼의 값들을 읽어서 RentalInfo 타입 객체를 생성하고 리턴
+	private RentalInfo makeRentalInfoFromResultSet(ResultSet rs) throws SQLException {
+		String place = rs.getString(COL_PLACE);
+		String date = rs.getString(COL_DATE);
+		String time = rs.getString(COL_TIME);
+		int id = rs.getInt(COL_ID_INFO);
+		
+		RentalInfo rentalInfo = new RentalInfo(place, date, time, id);
+		
+		return rentalInfo;		
+	}
+	
 	// read() 메서드에서 사용할 SQL문장
 	private static final String SQL_SELECT_ALL = String.format("select * from %s order by %s", TBL_RENTALS, COL_ID);
 	
@@ -121,6 +133,43 @@ public class RentalDao {
 		
 		return result;
 	}
+	
+	// readInfo() 메서드에서 사용할 SQL 문장.
+	private static final String SQL_INSERT_INFO = String.format(
+			"select * from %s order by %s",
+			TBL_RENTAL_INFO, COL_PLACE);
+	
+	/**
+	 * 데이터베이스 테이블 RENTAL_INFO 테이블에서 모든 레코드(행)를 검색해서
+	 * ID(고유키)의 오름차순으로 정렬된 리스트를 반환.
+	 * 테이블에 행이 없는 경우 빈 리스트를 리턴.
+	 * @return RentlaInfo를 원소로 갖는 ArrayList
+	 */
+	public List<RentalInfo> readInfo() {
+		List<RentalInfo> result = new ArrayList<RentalInfo>();
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			stmt = conn.prepareStatement(SQL_INSERT_INFO);
+			rs = stmt.executeQuery();
+			
+			while (rs.next() ) {
+				RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
+				result.add(rentalInfo);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeResources(conn, stmt, rs);
+		}
+		
+		return result;
+	}
+	
 	
 	// create(Rental rental) 메서드에서 사용할 SQL:
 	// insert into rentals (name, email, password, content, genre) values (?, ?, ?, ?, ?)
@@ -269,6 +318,108 @@ public class RentalDao {
         return rental;
 	}
 	
+	// delete(String id) 메서드에서 사용할 SQL: delete from rentals where id = ?
+	private static final String SQL_DELETE_RENTALS = String.format(
+			"delete from %s where %s = ?",
+			TBL_RENTALS, COL_ID);
+	
+	/** 테이블에서 RENTALS에서 고유키 id에 해당하는 레코드를 삭제.
+	 * @param id 삭제하려는 레코드의 고유키
+	 * @return 테이블에서 삭제된 행의 개수.
+	 */
+	public int delete(int id) {
+		int result = 0;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		 
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			stmt = conn.prepareStatement(SQL_DELETE_RENTALS);
+			stmt.setInt(1, id);
+			result = stmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeResources(conn, stmt);
+		}
+		
+		
+		return result;
+	}
+	
+	// 날짜 전달받은 값이랑 같은 경우:
+	// select * from rental_info where date = ? order by date
+	private static final String SQL_SELECT_BY_DATE= String.format(
+			"select * from %s where %s = ? order by %s",
+			TBL_RENTAL_INFO, COL_DATE, COL_DATE);
+	
+	/**
+	 * 날짜 검색하기
+	 * 날짜 전달받아서, 해당 SQL 문장을 실행하고 그 결과를 리턴.
+	 * @param date 연도, 월, 일
+	 * @return 검색 결과 리스트. 검색 결과가 없으면 빈 리스트.
+	 */
+	public List<RentalInfo> searchDate(String date) {
+		List<RentalInfo> result = new ArrayList<RentalInfo>();
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			stmt = conn.prepareStatement(SQL_SELECT_BY_DATE);
+			stmt.setString(1, date);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
+				result.add(rentalInfo);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeResources(conn, stmt, rs);
+		}
+		return result;
+	}
+	
+	// 날짜 전달받은 값이랑 같은 경우:
+		// select * from rental_info where date = ? order by date
+		private static final String SQL_SELECT_BY_TIME= String.format(
+				"select * from %s where %s = ? order by %s",
+				TBL_RENTAL_INFO, COL_TIME, COL_DATE);
+		
+		/**
+		 * 시간 검색하기
+		 * 시간 전달받아서, 해당 SQL 문장을 실행하고 그 결과를 리턴.
+		 * @param time 오전, 오후, 야간
+		 * @return 검색 결과 리스트. 검색 결과가 없으면 빈 리스트.
+		 */
+		public List<RentalInfo> searchTime(String time) {
+			List<RentalInfo> result = new ArrayList<RentalInfo>();
+			
+			Connection conn = null;
+			PreparedStatement stmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				stmt = conn.prepareStatement(SQL_SELECT_BY_TIME);
+				stmt.setString(1, time);
+				rs = stmt.executeQuery();
+				while (rs.next()) {
+					RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
+					result.add(rentalInfo);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeResources(conn, stmt, rs);
+			}
+			return result;
+		}
 	
 
 

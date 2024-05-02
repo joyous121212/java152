@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 
 public class RentalCheckFrame extends JFrame {
 	private static final String[] COLUMN_NAMES = {
-			"날짜", "시간"
+			"대관 장소", "날짜", "시간"
 	};
 
 	private static final long serialVersionUID = 1L;

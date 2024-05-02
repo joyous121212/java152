@@ -3,9 +3,10 @@ package com.itwill.project.view;
 import java.util.Calendar;
 
 import javax.swing.JButton;
+import javax.swing.JToggleButton;
 
 public class CalendarFunction {
-	JButton[] buttons;
+	JToggleButton[] buttons;
 	Calendar cal = Calendar.getInstance();
 	int year, month;
 	
@@ -13,7 +14,7 @@ public class CalendarFunction {
 		year = cal.get(Calendar.YEAR);
 		month = cal.get(Calendar.MONTH);
 	}
-	public void setButtons(JButton[] buttons) {
+	public void setButtons(JToggleButton[] buttons) {
 		this.buttons = buttons;
 	}
 	// Label -> 0000년 00월 문자열 리턴
