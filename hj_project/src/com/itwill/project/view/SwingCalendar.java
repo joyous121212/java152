@@ -34,11 +34,8 @@ public class SwingCalendar {
 
 	
 	private static JLabel lblTime;
-	private static JButton btnCancel;
-	private static JScrollPane scrollPane;
-	private static JButton btnConfirm;
 	private static com.itwill.project.view.Calendarmain calendarmain;
-	private static JTable table;
+
 	
 
 	/**
@@ -55,13 +52,6 @@ public class SwingCalendar {
 		lblTime.setBounds(536, 10, 62, 43);
 		calendarmain.getContentPane().add(lblTime);
 		
-	
-		btnCancel = new JButton("취소");
-		btnCancel.setFont(new Font("D2Coding", Font.PLAIN, 20));
-		btnCancel.setBounds(767, 303, 97, 43);
-		calendarmain.getContentPane().add(btnCancel);
-		
-
 	}
 
 
@@ -89,10 +79,12 @@ class Calendarmain extends JFrame implements ActionListener {
 	DefaultTableModel tableModel = new DefaultTableModel();
 	JScrollPane scrollPane = new JScrollPane();
 	
+	
 	JButton btnAdd = new JButton();
 	JButton btnBefore = new JButton("Before");
 	JButton btnAfter = new JButton("After");
 	JButton btnConfirm = new JButton("완료");
+	JButton btnCancel = new JButton("취소");
 	
 	JComboBox<String> comboBox = new JComboBox<String>();
 	
@@ -156,6 +148,11 @@ class Calendarmain extends JFrame implements ActionListener {
 		btnConfirm.setBounds(656, 303, 97, 43);
 		container.add(btnConfirm);
 		
+		btnCancel = new JButton("취소");
+		btnCancel.setFont(new Font("D2Coding", Font.PLAIN, 20));
+		btnCancel.setBounds(767, 303, 97, 43);
+		container.add(btnCancel);
+		
 		panel2 = new JPanel();
 		panel2.setBounds(0, 0, 504, 322);
 		container.add(panel2);
@@ -194,7 +191,7 @@ class Calendarmain extends JFrame implements ActionListener {
 	}
 	
 	
-	// TODO: 선택 된 날짜, 시간 SQL 테이블에 없으면 JTable, SQL테이블 에 입력, 
+	// 선택 된 날짜, 시간 SQL 테이블에 없으면 JTable, SQL테이블 에 입력, 
 	// 있으면 알림 메세지
 	private void addNewDateTime() {
 		String date = null;
@@ -220,7 +217,7 @@ class Calendarmain extends JFrame implements ActionListener {
 		List<RentalInfo> rentalInfo = dao.searchDate(dd);
 		List<RentalInfo> tt = dao.searchTime(time);
 		
-		// TODO: 날짜, 시간이 같은 경우
+		// 날짜, 시간이 같은 경우
 		
 		for (RentalInfo r : rentalInfo) {
 			if (r.getDate().equals(dd)) {
