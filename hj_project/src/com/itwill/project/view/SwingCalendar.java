@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.JobAttributes;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -197,39 +198,47 @@ class Calendarmain extends JFrame implements ActionListener {
 	// 있으면 알림 메세지
 	private void addNewDateTime() {
 		String date = null;
+		
 		for (int i = 0; i < buttons.length; i++) {
 			if (buttons[i].isSelected()) {
 				date = buttons[i].getText();				
 			}
 		}
 		
+		String dd = label.getText() + date + "일";
+		
 		String time = null;
 		int type = comboBox.getSelectedIndex();
 		if (type == 0) {
-			time =" 오전";
+			time ="오전";
 		} else if (type == 1) {
-			time =" 오후";
+			time ="오후";
 		} else if (type == 2) {
-			time =" 야간";
+			time ="야간";
 		}
 		
-//		List<RentalInfo> dd = dao.searchDate(date);
-//		List<RentalInfo> tt = dao.searchTime(time);
-//		
-//		List<RentalInfo> result = new ArrayList<>();
-//		
-//		for (RentalInfo r : result) {
-//			if (result.equals(dd)) {
-//				if(result.equals(tt)) {
-//					JOptionPane.showMessageDialog(container, "이미 마감되었습니다.");				
-//				}	
-//			}
-//		}
+		List<RentalInfo> rentalInfo = dao.searchDate(dd);
+		List<RentalInfo> tt = dao.searchTime(time);
 		
-		Object[] row = {label.getText() + date +"일", time};
+		// TODO: 날짜, 시간이 같은 경우
+		
+		for (RentalInfo r : rentalInfo) {
+			if (r.getDate().equals(dd)) {
+				if (r.getTime().equals(time)) {
+					JOptionPane.showMessageDialog(container, "이미 마감되었습니다.");
+					return;
+				}
+			} 
+			
+		}
+		Object[] row = { label.getText() + date + "일", time };
 		tableModel.addRow(row);
-		
+				
 		System.out.println(label.getText() + date + "일");
+		System.out.println(dd);
+		System.out.println(dao.searchDate(dd));
+		System.out.println(time);
+		System.out.println(dao.searchTime(time));
 
 	}
 

@@ -5,21 +5,18 @@ public class RentalInfo {
 	public static final class Entity {
 		public static final String TBL_RENTAL_INFO = "RENTAL_INFO";
 		
-		public static final String COL_PLACE = "PLACE";
-		public static final String COL_DATE = "DATE";
-		public static final String COL_TIME = "TIME";
+		public static final String COL_DATE = "DD";
+		public static final String COL_TIME = "TT";
 		public static final String COL_ID_INFO = "ID";
 	}
 	
-	private String place;
 	private String date;
 	private String time;
 	private int id;
 	
 	public RentalInfo() {}
 	
-	public RentalInfo(String place, String date, String time, int id) {
-		this.place = place;
+	public RentalInfo(String date, String time, int id) {
 		this.date = date;
 		this.time = time;
 		this.id = id;
@@ -31,14 +28,6 @@ public class RentalInfo {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public String getPlace() {
-		return place;
-	}
-
-	public void setPlace(String place) {
-		this.place = place;
 	}
 
 	public String getDate() {
@@ -59,8 +48,9 @@ public class RentalInfo {
 
 	@Override
 	public String toString() {
-		return "Date [place=" + place + ", date=" + date + ", time=" + time + "]";
+		return "RentalInfo [date=" + date + ", time=" + time + ", id=" + id + "]";
 	}
-	
+
+
 	
 }

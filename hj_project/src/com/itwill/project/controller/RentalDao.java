@@ -90,12 +90,11 @@ public class RentalDao {
 	
 	//ResultSet에서 각 컬럼의 값들을 읽어서 RentalInfo 타입 객체를 생성하고 리턴
 	private RentalInfo makeRentalInfoFromResultSet(ResultSet rs) throws SQLException {
-		String place = rs.getString(COL_PLACE);
 		String date = rs.getString(COL_DATE);
 		String time = rs.getString(COL_TIME);
 		int id = rs.getInt(COL_ID_INFO);
 		
-		RentalInfo rentalInfo = new RentalInfo(place, date, time, id);
+		RentalInfo rentalInfo = new RentalInfo(date, time, id);
 		
 		return rentalInfo;		
 	}
@@ -136,8 +135,8 @@ public class RentalDao {
 	
 	// readInfo() 메서드에서 사용할 SQL 문장.
 	private static final String SQL_INSERT_INFO = String.format(
-			"select * from %s order by %s",
-			TBL_RENTAL_INFO, COL_PLACE);
+			"select * from %s",
+			TBL_RENTAL_INFO);
 	
 	/**
 	 * 데이터베이스 테이블 RENTAL_INFO 테이블에서 모든 레코드(행)를 검색해서
@@ -350,7 +349,7 @@ public class RentalDao {
 	}
 	
 	// 날짜 전달받은 값이랑 같은 경우:
-	// select * from rental_info where date = ? order by date
+	// select * from rental_info where dd = ? order by date
 	private static final String SQL_SELECT_BY_DATE= String.format(
 			"select * from %s where %s = ? order by %s",
 			TBL_RENTAL_INFO, COL_DATE, COL_DATE);
@@ -361,7 +360,7 @@ public class RentalDao {
 	 * @param date 연도, 월, 일
 	 * @return 검색 결과 리스트. 검색 결과가 없으면 빈 리스트.
 	 */
-	public List<RentalInfo> searchDate(String date) {
+	public List<RentalInfo> searchDate(String dd) {
 		List<RentalInfo> result = new ArrayList<RentalInfo>();
 		
 		Connection conn = null;
@@ -371,7 +370,7 @@ public class RentalDao {
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASSWORD);
 			stmt = conn.prepareStatement(SQL_SELECT_BY_DATE);
-			stmt.setString(1, date);
+			stmt.setString(1, dd);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
@@ -385,8 +384,8 @@ public class RentalDao {
 		return result;
 	}
 	
-	// 날짜 전달받은 값이랑 같은 경우:
-		// select * from rental_info where date = ? order by date
+	// 시간 전달받은 값이랑 같은 경우:
+		// select * from rental_info where tt = ? order by date
 		private static final String SQL_SELECT_BY_TIME= String.format(
 				"select * from %s where %s = ? order by %s",
 				TBL_RENTAL_INFO, COL_TIME, COL_DATE);
@@ -397,7 +396,7 @@ public class RentalDao {
 		 * @param time 오전, 오후, 야간
 		 * @return 검색 결과 리스트. 검색 결과가 없으면 빈 리스트.
 		 */
-		public List<RentalInfo> searchTime(String time) {
+		public List<RentalInfo> searchTime(String tt) {
 			List<RentalInfo> result = new ArrayList<RentalInfo>();
 			
 			Connection conn = null;
@@ -407,7 +406,7 @@ public class RentalDao {
 			try {
 				conn = DriverManager.getConnection(URL, USER, PASSWORD);
 				stmt = conn.prepareStatement(SQL_SELECT_BY_TIME);
-				stmt.setString(1, time);
+				stmt.setString(1, tt);
 				rs = stmt.executeQuery();
 				while (rs.next()) {
 					RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
