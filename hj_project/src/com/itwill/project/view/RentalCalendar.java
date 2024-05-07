@@ -244,6 +244,7 @@ class Calendarmain extends JFrame implements ActionListener {
 			time ="야간";
 		}
 		
+		
 		List<RentalInfo> rentalInfo = dao.searchDate(dd);
 		List<RentalInfo> tt = dao.searchTime(time);
 		
@@ -258,8 +259,16 @@ class Calendarmain extends JFrame implements ActionListener {
 			} 
 			
 		}
-		Object[] row = { label.getText() + date + "일", time };
+		Object[] row = { dd, time };
+		for (int i = 0; i < tableModel.getRowCount(); i++) {
+			if (dd.equals(tableModel.getValueAt(i, 0)) && time.equals(tableModel.getValueAt(i, 1))) {
+				JOptionPane.showMessageDialog(container, "이미 선택되었습니다.");
+				return;
+			}
+		}
 		tableModel.addRow(row);
+		
+		System.out.println(dd.equals(tableModel.getValueAt(0, 0)));
 				
 		System.out.println(label.getText() + date + "일");
 		System.out.println(dd);

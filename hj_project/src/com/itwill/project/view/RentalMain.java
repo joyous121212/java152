@@ -3,6 +3,7 @@ package com.itwill.project.view;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.JobAttributes;
@@ -19,6 +20,8 @@ import com.itwill.project.view.RentalDetailFrame.CreateNotify;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
+import javax.swing.JPanel;
 
 public class RentalMain implements CreateNotify {
 
@@ -29,6 +32,10 @@ public class RentalMain implements CreateNotify {
 	
 	private RentalDao dao = RentalDao.getInstance();
 	private JLabel lblTitle;
+	String theaterIcon = "image\\theater icon.png";
+	private JPanel panelImage;
+	
+	
 
 	/**
 	 * Launch the application.
@@ -59,6 +66,7 @@ public class RentalMain implements CreateNotify {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(theaterIcon));
 		frame.setBounds(100, 100, 438, 471);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -83,7 +91,7 @@ public class RentalMain implements CreateNotify {
 		btnCheck.setBounds(12, 263, 398, 69);
 		frame.getContentPane().add(btnCheck);
 		
-		lblTitle = new JLabel("공연장, 연습실 대관 시스템");
+		lblTitle = new JLabel("연습실 대관 시스템");
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitle.setFont(new Font("D2Coding", Font.PLAIN, 27));
 		lblTitle.setBounds(12, 46, 398, 95);
@@ -98,6 +106,12 @@ public class RentalMain implements CreateNotify {
 		btnManager.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		btnManager.setBounds(251, 367, 159, 43);
 		frame.getContentPane().add(btnManager);
+		
+		
+		panelImage = new JPanel();
+		panelImage.setBounds(0, 0, 422, 432);
+		frame.getContentPane().add(panelImage);
+		panelImage.setLayout(null);
 	}
 
 	@Override
@@ -105,13 +119,4 @@ public class RentalMain implements CreateNotify {
 		// 테이블에 update 성공했을 때 RentalDetailFrame이 호출하는 메서드
 		JOptionPane.showMessageDialog(frame, "테이블에 저장 성공!");
 	}
-	
-	
-
-
-
-
-
-
-	
 }

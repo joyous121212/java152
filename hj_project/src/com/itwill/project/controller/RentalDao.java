@@ -188,6 +188,7 @@ public class RentalDao {
 			try {
 				conn = DriverManager.getConnection(URL, USER, PASSWORD);
 				stmt = conn.prepareStatement(SQL_SELECT_INFO_BY_ID);
+				int index = 0;
 				stmt.setInt(1, id);
 				rs = stmt.executeQuery();
 				

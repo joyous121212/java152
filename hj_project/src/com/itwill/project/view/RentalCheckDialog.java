@@ -125,7 +125,7 @@ public class RentalCheckDialog extends JDialog {
 		List<Rental> result = new ArrayList<>();
 		
 		int id = password.getFirst().getId();
-				
+		
 		if (result.equals(rental) && result.equals(password)) {
 			JOptionPane.showMessageDialog(contentPanel, "다시한번 확인하세요");
 		} else if (rental.equals(password)){		

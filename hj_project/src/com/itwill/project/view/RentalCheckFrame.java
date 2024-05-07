@@ -24,6 +24,8 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
+import java.awt.SystemColor;
+import java.awt.Color;
 
 public class RentalCheckFrame extends JFrame {
 	private static final String[] COLUMN_NAMES = {
@@ -80,12 +82,14 @@ public class RentalCheckFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 530, 570);
 		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.info);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		searchPanel = new JPanel();
+		searchPanel.setBackground(SystemColor.info);
 		searchPanel.setBounds(5, 5, 504, 39);
 		contentPane.add(searchPanel);
 		
@@ -113,6 +117,7 @@ public class RentalCheckFrame extends JFrame {
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
+		table.setBackground(SystemColor.menu);
 		tableModel = new DefaultTableModel(null, COLUMN_NAMES);
 		table.setModel(tableModel);
 		scrollPane.setViewportView(table);
@@ -149,8 +154,10 @@ public class RentalCheckFrame extends JFrame {
 		String approval = rental.getApproval();
 		if (approval == "승인") {
 			textApproval.setText("승인되었습니다.");
-		} else {
+		} else if (approval == "불가"){
 			textApproval.setText("승인불가입니다.");
+		} else {
+			textApproval.setText("미확정");
 		}
 	}
 }
