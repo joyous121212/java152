@@ -22,7 +22,7 @@ import javax.swing.JTable;
 
 public class RentalManagerFrame extends JFrame {
 	private static final String[] COLUMN_NAMES = {
-			"번호", "이름", "내용", "예약 시간"
+			"번호", "이름", "장르", "내용", "예약 시간"
 	};
 
 	private static final long serialVersionUID = 1L;
@@ -83,6 +83,7 @@ public class RentalManagerFrame extends JFrame {
 		contentPane.add(panel, BorderLayout.SOUTH);
 		
 		btnDetail = new JButton("상세보기");
+		btnDetail.addActionListener((e) -> showDetailsFrame());
 		btnDetail.setFont(new Font("D2Coding", Font.PLAIN, 18));
 		panel.add(btnDetail);
 		
@@ -101,6 +102,17 @@ public class RentalManagerFrame extends JFrame {
 		panel.add(btnCancel);
 	}
 	
+	private void showDetailsFrame() {
+		int index = table.getSelectedRow();
+		if (index == -1) {
+			JOptionPane.showMessageDialog(contentPane, "상세보기할 행을 먼저 선택하세요.", "경고", JOptionPane.WARNING_MESSAGE);
+			
+			return;
+		}
+		Integer id = (Integer) tableModel.getValueAt(index, 0);
+		RentalManagerDetailsFrame.showRentalManagerDetailsFrame(id);
+	}
+
 	private void deleteRental() {
 		int index = table.getSelectedRow(); // 테이블에서 선택된 행의 인덱스
 		if(index == -1) {
@@ -139,6 +151,7 @@ public class RentalManagerFrame extends JFrame {
 			Object[] row = {
 					r.getId(),
 					r.getName(),
+					r.getGenre(),
 					r.getContent(),
 					r.getCreatedTime(),
 			};

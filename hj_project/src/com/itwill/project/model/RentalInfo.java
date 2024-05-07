@@ -16,10 +16,9 @@ public class RentalInfo {
 	
 	public RentalInfo() {}
 	
-	public RentalInfo(String date, String time, int id) {
+	public RentalInfo(String date, String time) {
 		this.date = date;
 		this.time = time;
-		this.id = id;
 	}
 
 	public int getId() {

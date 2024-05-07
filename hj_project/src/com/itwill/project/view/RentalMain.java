@@ -73,7 +73,6 @@ public class RentalMain implements CreateNotify {
 		btnRegister.setFont(new Font("D2Coding", Font.PLAIN, 30));
 		btnRegister.setBounds(12, 170, 398, 69);
 		frame.getContentPane().add(btnRegister);
-		
 		btnCheck = new JButton("신청 내역 확인");
 		btnCheck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

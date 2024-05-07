@@ -20,7 +20,6 @@ import static com.itwill.project.model.Rental.Entity.COL_MODIFIED_TIME;
 import static com.itwill.project.jdbc.OracleJdbc.PASSWORD;
 import static com.itwill.project.jdbc.OracleJdbc.URL;
 import static com.itwill.project.jdbc.OracleJdbc.USER;
-import static com.itwill.project.jdbc.OracleJdbc.*;
 import static com.itwill.project.model.Rental.Entity.*;
 import static com.itwill.project.model.RentalInfo.Entity.*;
 
@@ -82,8 +81,9 @@ public class RentalDao {
 		String genre = rs.getString(COL_GENRE);
 		LocalDateTime createdTime = rs.getTimestamp(COL_CREATED_TIME).toLocalDateTime();
 		LocalDateTime modifiedTime = rs.getTimestamp(COL_MODIFIED_TIME).toLocalDateTime();	
+		String approval = rs.getString(COL_APPROVAL);
 		
-		Rental rental = new Rental(id, name, email, password, content, genre, createdTime, modifiedTime);
+		Rental rental = new Rental(id, name, email, password, content, genre, createdTime, modifiedTime, approval);
 		
 		return rental;
 	}
@@ -92,9 +92,8 @@ public class RentalDao {
 	private RentalInfo makeRentalInfoFromResultSet(ResultSet rs) throws SQLException {
 		String date = rs.getString(COL_DATE);
 		String time = rs.getString(COL_TIME);
-		int id = rs.getInt(COL_ID_INFO);
 		
-		RentalInfo rentalInfo = new RentalInfo(date, time, id);
+		RentalInfo rentalInfo = new RentalInfo(date, time);
 		
 		return rentalInfo;		
 	}
@@ -169,6 +168,42 @@ public class RentalDao {
 		return result;
 	}
 	
+	// 아이디로 검색하기
+		private static final String SQL_SELECT_INFO_BY_ID = String.format(
+				"select %s, %s from %s where %s = ?",
+				COL_DATE, COL_TIME, TBL_RENTAL_INFO, COL_ID_INFO);
+		
+		/**
+		 * RENTALS 테이블의 고유키 id를 전달받아서, 해당 RentalInfo 객체를 리턴.
+		 * @param id 검색하기 위한 고유키.
+		 * @return 아이디로 검색한 RentalInfo리스트. 고유키에 해당하는 행이 없는 경우 null을 리턴.
+		 */
+		public List<RentalInfo> readInfo(int id) {
+			List<RentalInfo> result = new ArrayList<RentalInfo>();
+			
+			Connection conn = null;
+			PreparedStatement stmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				stmt = conn.prepareStatement(SQL_SELECT_INFO_BY_ID);
+				stmt.setInt(1, id);
+				rs = stmt.executeQuery();
+				
+				while (rs.next() ) {
+					RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
+					result.add(rentalInfo);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeResources(conn, stmt, rs);
+			}
+			
+			return result;
+		}
+	
 	
 	// create(Rental rental) 메서드에서 사용할 SQL:
 	// insert into rentals (name, email, password, content, genre) values (?, ?, ?, ?, ?)
@@ -205,6 +240,39 @@ public class RentalDao {
 		
 		return result;
 	}
+	
+	// createRentalInfo메서드에서 사용할 SQL:
+		// insert into rentals (name, email, password, content, genre) values (?, ?, ?, ?, ?)
+		private static final String SQL_INSERT_RENTALINFO = String.format(
+				"insert into %s values (?, ?, (select max(%s) from %s))", 
+				TBL_RENTAL_INFO, COL_ID, TBL_RENTALS);
+		
+		/**
+		 * 데이터베이스에 RENTALS 테이블에 행을 삽입.
+		 * @param rentals 테이블에 삽입할 정보를 가지고 있는 객체
+		 * @return 테이블에 삽입된 행의 개수.
+		 */
+		public int createRentalInfo(RentalInfo rentalInfo) {
+			int result = 0;
+			
+			Connection conn = null;
+			PreparedStatement stmt = null;
+			
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				stmt = conn.prepareStatement(SQL_INSERT_RENTALINFO);
+				stmt.setString(1, rentalInfo.getDate());
+				stmt.setString(2, rentalInfo.getTime());
+				result = stmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeResources(conn, stmt);
+			}
+			
+			return result;
+		}
 	
 	// 이메일에 검색 결과가 있는 결과:
 	// select * rentals where email = ?
@@ -285,8 +353,8 @@ public class RentalDao {
 	
 	// 아이디(PK)로 검색하기:
 	private static final String SQL_SELECT_BY_ID = String.format(
-			"select %s, %s from %s where %s = ?", 
-			COL_EMAIL, COL_PASSWORD, TBL_RENTALS, COL_ID);
+			"select * from %s where %s = ?", 
+			TBL_RENTALS, COL_ID);
 	
 	/**
 	 * RENTALS 테이블의 고유키 id를 전달받아서, 해당 Rental 객체를 리턴.
@@ -346,6 +414,37 @@ public class RentalDao {
 		
 		
 		return result;
+	}
+	
+	// maxId 메서드에서 사용할 SQL: select max(id) from rentals
+	private static final String SQL_MAXID = String.format(
+			"select * from %s where %s >= (select max(%s) from %s)", 
+			TBL_RENTAL_INFO, COL_ID_INFO, COL_ID, TBL_RENTALS);
+	
+	/**
+	 * 테이블 RentalInfo에서 id 최대값 검색
+	 * @return id 최대값 
+	 */
+	public RentalInfo maxId() {
+		RentalInfo rental = null;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			stmt = conn.prepareStatement(SQL_MAXID);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				rental = makeRentalInfoFromResultSet(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeResources(conn, stmt, rs);
+		}
+				
+		return rental;
 	}
 	
 	// 날짜 전달받은 값이랑 같은 경우:
@@ -419,7 +518,77 @@ public class RentalDao {
 			}
 			return result;
 		}
+		
+		// 아이디로 날짜, 시간 검색하기
+		// select dd, tt from rental_info where id = (select id from rentals where id = ?);
+		private static final String SQL_SELECT_DATE_TIME = String.format(
+				"select %s, %s from %s where %s = (select %s from %s where %s = ?)",
+				COL_DATE, COL_TIME, TBL_RENTAL_INFO, COL_ID_INFO, COL_ID, TBL_RENTALS, COL_ID);
+
+		/**
+		 * 아이디 전달받아서, 해당 SQL 문장을 실행하고 그 결과를 리턴.
+		 * 
+		 * @param id 이메일, 비밀번호 일치하면 그 값의 아이디
+		 * @return 검색 결과 리스트. 검색 결과가 없으면 빈 리스트.
+		 */
+		public List<RentalInfo> searchDateTime(int id) {
+			List<RentalInfo> result = new ArrayList<RentalInfo>();
+
+			Connection conn = null;
+			PreparedStatement stmt = null;
+			ResultSet rs = null;
+
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				stmt = conn.prepareStatement(SQL_SELECT_DATE_TIME);
+				stmt.setInt(1, id);
+				rs = stmt.executeQuery();
+				while (rs.next()) {
+					RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
+					result.add(rentalInfo);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeResources(conn, stmt, rs);
+			}
+			return result;
+		}
 	
+		private static final String SQL_UPDATE = String.format(
+				"update %s "
+				+ "set %s = ?, %s = ?, %s = systimestamp "
+				+ "where %s = ?", 
+				TBL_RENTALS, COL_CONTENT, COL_APPROVAL, COL_MODIFIED_TIME, COL_ID);
+		
+		/** 
+		 * Rentals 테이블 업데이트.
+		 * @param rentals 업데이트할 id(고유키), 내용을 가지고 있는 객체
+		 * @return 업데이트한 행의 개수.
+		 */
+		
+		public int update(Rental rental) {
+			int result = 0;
+			
+			Connection conn = null;
+	        PreparedStatement stmt = null;
+	        try {
+	            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+	            stmt = conn.prepareStatement(SQL_UPDATE);
+	            stmt.setString(1, rental.getContent());
+	            stmt.setString(2, rental.getApproval());
+	            stmt.setInt(3, rental.getId());
+	            result = stmt.executeUpdate();
+	            
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            closeResources(conn, stmt);
+	        }
+	       
+	        return result;
+			
+		}
 
 
 }

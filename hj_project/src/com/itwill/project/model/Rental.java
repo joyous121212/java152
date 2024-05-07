@@ -17,6 +17,7 @@ public class Rental {
 		public static final String COL_GENRE = "GENRE";
 		public static final String COL_CREATED_TIME = "CREATED_TIME";
 		public static final String COL_MODIFIED_TIME = "MODIFIED_TIME";
+		public static final String COL_APPROVAL = "APPROVAL";
 	}
 	
 	private int id;
@@ -27,11 +28,12 @@ public class Rental {
 	private String genre;
 	private LocalDateTime createdTime;
 	private LocalDateTime modifiedTime;
+	private String approval;
 	
 	public Rental() {}
 
 	public Rental(int id, String name, String email, String password, String content, String genre,
-			LocalDateTime createdTime, LocalDateTime modifiedTime) {
+			LocalDateTime createdTime, LocalDateTime modifiedTime, String approval) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
@@ -40,6 +42,7 @@ public class Rental {
 		this.genre = genre;
 		this.createdTime = createdTime;
 		this.modifiedTime = modifiedTime;
+		this.approval = approval;
 	}
 
 	public int getId() {
@@ -105,17 +108,27 @@ public class Rental {
 	public void setModifiedTime(LocalDateTime modifiedTime) {
 		this.modifiedTime = modifiedTime;
 	}
+	
+	
+
+	public String getApproval() {
+		return approval;
+	}
+
+	public void setApproval(String approval) {
+		this.approval = approval;
+	}
 
 	@Override
 	public String toString() {
 		return "Rental [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", content="
 				+ content + ", genre=" + genre + ", createdTime=" + createdTime + ", modifiedTime=" + modifiedTime
-				+ "]";
+				+ ", approval=" + approval + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(content, createdTime, email, genre, id, modifiedTime, name, password);
+		return Objects.hash(approval, content, createdTime, email, genre, id, modifiedTime, name, password);
 	}
 
 	@Override
@@ -127,11 +140,14 @@ public class Rental {
 		if (getClass() != obj.getClass())
 			return false;
 		Rental other = (Rental) obj;
-		return Objects.equals(content, other.content) && Objects.equals(createdTime, other.createdTime)
-				&& Objects.equals(email, other.email) && Objects.equals(genre, other.genre) && id == other.id
+		return Objects.equals(approval, other.approval) && Objects.equals(content, other.content)
+				&& Objects.equals(createdTime, other.createdTime) && Objects.equals(email, other.email)
+				&& Objects.equals(genre, other.genre) && id == other.id
 				&& Objects.equals(modifiedTime, other.modifiedTime) && Objects.equals(name, other.name)
 				&& Objects.equals(password, other.password);
 	}
+
+
 
 	
 

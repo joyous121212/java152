@@ -26,9 +26,11 @@ import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 
 import com.itwill.project.controller.RentalDao;
+import com.itwill.project.model.Rental;
 import com.itwill.project.model.RentalInfo;
+import com.itwill.project.view.RentalDetailFrame.CreateNotify;
 
-public class SwingCalendar {
+public class RentalCalendar  {
 	
 
 
@@ -53,6 +55,10 @@ public class SwingCalendar {
 		calendarmain.getContentPane().add(lblTime);
 		
 	}
+
+
+
+	
 
 
 
@@ -144,6 +150,7 @@ class Calendarmain extends JFrame implements ActionListener {
 		label.setText(cf.getCalText());
 		
 		btnConfirm = new JButton("완료");
+		btnConfirm.addActionListener((e) -> createRentalInfo());
 		btnConfirm.setFont(new Font("D2Coding", Font.PLAIN, 20));
 		btnConfirm.setBounds(656, 303, 97, 43);
 		container.add(btnConfirm);
@@ -181,6 +188,29 @@ class Calendarmain extends JFrame implements ActionListener {
 				
 	}
 	
+	private void createRentalInfo() {
+		// TODO RentalInfo 데이터에 저장
+		String date = null;
+		String time = null;
+		
+		RentalInfo rentalInfo = new RentalInfo(date, time);
+		System.out.println((String) table.getValueAt(0, 0));
+		int result = 0;
+		for (int i = 0; i < table.getRowCount(); i++) {
+			date = (String) table.getValueAt(i, 0);
+			time = (String) table.getValueAt(i, 1);
+			rentalInfo = new RentalInfo(date, time);
+			result = dao.createRentalInfo(rentalInfo);			
+		}
+		if (result == 1) {
+			JOptionPane.showMessageDialog(container, "예약 성공!");
+
+			dispose();
+		} else {
+			JOptionPane.showMessageDialog(container, "예약 실패");
+		}		
+	}
+
 	private void initializeTable() {
 		List<RentalInfo> rentalInfo = dao.readInfo();
 		resetTable(rentalInfo);
@@ -243,6 +273,7 @@ class Calendarmain extends JFrame implements ActionListener {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		btnAfter.addActionListener(this);
 		btnBefore.addActionListener(this);
+		btnCancel.addActionListener((e) -> dispose());
 	}
 	
 	
@@ -259,6 +290,7 @@ class Calendarmain extends JFrame implements ActionListener {
 		
 	}
 	
+
 	
 }
 

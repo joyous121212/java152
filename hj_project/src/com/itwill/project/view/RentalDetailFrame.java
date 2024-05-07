@@ -73,8 +73,9 @@ public class RentalDetailFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public RentalDetailFrame(Component parent, CreateNotify app) {
+		
 		this.parent = parent;
-		this.app = app; 
+		this.app = app;
 		
 		initialize();
 	}
@@ -226,7 +227,7 @@ public class RentalDetailFrame extends JFrame {
 			return;
 		}
 		
-		Rental rental = new Rental(0, name, email, password, content, genre, null, null);
+		Rental rental = new Rental(0, name, email, password, content, genre, null, null, null);
 		int result = dao.create(rental);
 		if (result == 1) {
 			app.notifyCreateSuccess();
@@ -236,7 +237,7 @@ public class RentalDetailFrame extends JFrame {
 			JOptionPane.showMessageDialog(RentalDetailFrame.this, "INSERT 실패");
 		}
 		
-		SwingCalendar.showSwingCalendar();		
+		RentalCalendar.showSwingCalendar();	
 		
 	}
 

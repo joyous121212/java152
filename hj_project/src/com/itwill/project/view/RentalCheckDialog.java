@@ -106,6 +106,7 @@ public class RentalCheckDialog extends JDialog {
 		// 이메일, 비밀번호 입력 후 아이디 같으면 다음화면 넘어감
 		String email = textEmail.getText();
 		String pw = textPW.getText();
+		
 		if (email.equals("")) {
 			JOptionPane.showMessageDialog(contentPanel, "이메일을 입력하세요.", "경고", JOptionPane.WARNING_MESSAGE);
 			textEmail.requestFocus();
@@ -123,10 +124,13 @@ public class RentalCheckDialog extends JDialog {
 		// TODO: 둘다 없는 경우
 		List<Rental> result = new ArrayList<>();
 		
+		int id = password.getFirst().getId();
+				
 		if (result.equals(rental) && result.equals(password)) {
 			JOptionPane.showMessageDialog(contentPanel, "다시한번 확인하세요");
-		} else if (rental.equals(password)){
-			RentalCheckFrame.showRentalCheckFrame();
+		} else if (rental.equals(password)){		
+			RentalCheckFrame.showRentalCheckFrame(id);
+			System.out.println(id);
 			dispose();
 		} else {
 			JOptionPane.showMessageDialog(contentPanel, "다시한번 확인하세요");
