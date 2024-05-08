@@ -14,6 +14,8 @@ import com.itwill.project.model.RentalInfo;
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import java.awt.Font;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -26,6 +28,7 @@ import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import java.awt.SystemColor;
 import java.awt.Color;
+import java.awt.Component;
 
 public class RentalCheckFrame extends JFrame {
 	private static final String[] COLUMN_NAMES = {
@@ -34,29 +37,36 @@ public class RentalCheckFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
+	private String frameImage = "image/background.jpg";
+	
 	private RentalDao dao = RentalDao.getInstance();
+	private Component parent;
+	
+	private String email;
+	private String pw;
 	private int rentalId;
 	
 	private JPanel contentPane;
-	private JPanel searchPanel;
-	private JPanel buttonPanel;
 	private JLabel lblNewLabel;
 	private JButton btnConfirm;
-	private JButton btnCancel;
 	private JTable table;
 	private DefaultTableModel tableModel;
 	private JScrollPane scrollPane;
 	private JTextField textApproval;
 	private JLabel lblApproval;
+	private JLabel lblContent;
+	private JTextArea textAreaContent;
+	private JScrollPane scrollPaneContent;
+	private JLabel lblImage;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void showRentalCheckFrame(int rentalId) {
+	public static void showRentalCheckFrame(Component parent, String email, String pw, int rentalId) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RentalCheckFrame frame = new RentalCheckFrame(rentalId);
+					RentalCheckFrame frame = new RentalCheckFrame(parent, email, pw, rentalId);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -68,8 +78,12 @@ public class RentalCheckFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RentalCheckFrame(int rentalId) {
+	public RentalCheckFrame(Component parent, String email, String pw, int rentalId) {
+		this.parent = parent;
+		this.email = email;
+		this.pw = pw;
 		this.rentalId = rentalId;
+		
 		
 		initialize();
 		initializeRentalInfo();
@@ -80,43 +94,34 @@ public class RentalCheckFrame extends JFrame {
 	public void initialize() {
 		setTitle("예약 내역 확인");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 530, 570);
+		
+		int x = 0;
+		int y = 0;
+		if(parent != null) {
+			x = parent.getX();
+			y = parent.getY();
+		}
+		setBounds(x, y, 530, 570);
+		
+		if (parent == null) {
+			setLocationRelativeTo(null);
+		}
+		
 		contentPane = new JPanel();
-		contentPane.setBackground(SystemColor.info);
+		contentPane.setBackground(SystemColor.menu);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		searchPanel = new JPanel();
-		searchPanel.setBackground(SystemColor.info);
-		searchPanel.setBounds(5, 5, 504, 39);
-		contentPane.add(searchPanel);
-		
-		lblNewLabel = new JLabel("내역 확인");
-		lblNewLabel.setFont(new Font("D2Coding", Font.PLAIN, 24));
-		searchPanel.add(lblNewLabel);
-		
-		buttonPanel = new JPanel();
-		buttonPanel.setBounds(5, 479, 504, 47);
-		contentPane.add(buttonPanel);
-		
-		btnConfirm = new JButton("확인");
-		btnConfirm.addActionListener((e) -> dispose());
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		btnConfirm.setFont(new Font("D2Coding", Font.PLAIN, 24));
-		buttonPanel.add(btnConfirm);
-		
-		btnCancel = new JButton("취소");
-		btnCancel.addActionListener((e) -> dispose());
-		btnCancel.setFont(new Font("D2Coding", Font.PLAIN, 24));
-		buttonPanel.add(btnCancel);
-		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(5, 44, 504, 382);
+		scrollPane.setBounds(5, 44, 504, 250);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
+		table.getTableHeader().setFont(new Font("D2Coding", Font.PLAIN, 20));
+		table.setFont(new Font("D2Coding", Font.PLAIN, 20));
+		table.setRowHeight(25);
 		table.setBackground(SystemColor.menu);
 		tableModel = new DefaultTableModel(null, COLUMN_NAMES);
 		table.setModel(tableModel);
@@ -132,12 +137,40 @@ public class RentalCheckFrame extends JFrame {
 		lblApproval.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		lblApproval.setBounds(5, 436, 117, 33);
 		contentPane.add(lblApproval);
+		
+		lblContent = new JLabel("내용");
+		lblContent.setFont(new Font("D2Coding", Font.PLAIN, 24));
+		lblContent.setBounds(5, 304, 117, 33);
+		contentPane.add(lblContent);
+		
+		scrollPaneContent = new JScrollPane();
+		scrollPaneContent.setBounds(134, 304, 375, 122);
+		contentPane.add(scrollPaneContent);
+		
+		textAreaContent = new JTextArea();
+		textAreaContent.setFont(new Font("D2Coding", Font.PLAIN, 20));
+		scrollPaneContent.setViewportView(textAreaContent);
+		
+		lblNewLabel = new JLabel("내역 확인");
+		lblNewLabel.setBounds(196, 10, 108, 29);
+		contentPane.add(lblNewLabel);
+		lblNewLabel.setFont(new Font("D2Coding", Font.PLAIN, 24));
+		
+		btnConfirm = new JButton("확인");
+		btnConfirm.setBounds(421, 481, 81, 37);
+		contentPane.add(btnConfirm);
+		btnConfirm.addActionListener((e) -> dispose());
+		btnConfirm.setFont(new Font("D2Coding", Font.PLAIN, 20));
+		
+		lblImage = new JLabel(new ImageIcon(frameImage));
+		lblImage.setBackground(SystemColor.menu);
+		lblImage.setBounds(0, 0, 514, 531);
+		contentPane.add(lblImage);
 	}
 	
 	private void initializeRentalInfo() {
 		List<RentalInfo> rentalInfo = new ArrayList<RentalInfo>();
-		rentalInfo = dao.readInfo(rentalId);
-		System.out.println(rentalInfo);
+		rentalInfo = dao.searchDateTime(email, pw);
 		if (rentalInfo == null) return;
 		
 		for (RentalInfo r : rentalInfo) {
@@ -151,13 +184,21 @@ public class RentalCheckFrame extends JFrame {
 		
 		Rental rental = new Rental();
 		rental = dao.read(rentalId);
+		System.out.println(rental);
 		String approval = rental.getApproval();
-		if (approval == "승인") {
-			textApproval.setText("승인되었습니다.");
-		} else if (approval == "불가"){
-			textApproval.setText("승인불가입니다.");
-		} else {
-			textApproval.setText("미확정");
-		}
+		
+		System.out.println(approval);
+		System.out.println(approval == null);
+		
+			if (approval == null) {
+				textApproval.setText("미확정");
+			} else if (approval.equals("승인")) {
+				textApproval.setText("승인되었습니다");
+			} else if (approval.equals("승인")) {
+				textApproval.setText("승인되었습니다.");
+			}
+		
+		String content = rental.getContent();
+		textAreaContent.setText(content);
 	}
 }

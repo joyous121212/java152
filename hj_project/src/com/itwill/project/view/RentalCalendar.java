@@ -6,14 +6,13 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.JobAttributes;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,14 +25,10 @@ import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 
 import com.itwill.project.controller.RentalDao;
-import com.itwill.project.model.Rental;
 import com.itwill.project.model.RentalInfo;
-import com.itwill.project.view.RentalDetailFrame.CreateNotify;
+import java.awt.SystemColor;
 
 public class RentalCalendar  {
-	
-
-
 	
 	private static JLabel lblTime;
 	private static com.itwill.project.view.Calendarmain calendarmain;
@@ -45,6 +40,8 @@ public class RentalCalendar  {
 	 */
 	public static void showSwingCalendar() {
 		calendarmain = new Calendarmain();
+		calendarmain.setBackground(SystemColor.info);
+		calendarmain.getContentPane().setBackground(SystemColor.menu);
 		calendarmain.setBounds(100, 100, 900, 400);
 		calendarmain.setTitle("날짜 및 시간 선택");
 		calendarmain.getContentPane().setLayout(null);
@@ -53,18 +50,14 @@ public class RentalCalendar  {
 		lblTime.setFont(new Font("D2Coding", Font.PLAIN, 12));
 		lblTime.setBounds(536, 10, 62, 43);
 		calendarmain.getContentPane().add(lblTime);
+
 		
 	}
-
-
-
-	
-
-
-
 }
 
 class Calendarmain extends JFrame implements ActionListener {
+	
+	private String frameImage = "image/background.jpg";
 
 	private static final String[] SEARCH_TYPES = {
 			"오전", "오후", "야간"
@@ -80,6 +73,8 @@ class Calendarmain extends JFrame implements ActionListener {
 	JPanel panel1 = new JPanel();
 	JPanel panel2 = new JPanel();
 	JPanel panel3 = new JPanel();
+	
+	JLabel lblImage = new JLabel(new ImageIcon(frameImage));
 	
 	JTable table = new JTable();
 	DefaultTableModel tableModel = new DefaultTableModel();
@@ -118,6 +113,7 @@ class Calendarmain extends JFrame implements ActionListener {
 		container.add("Center", panel2);
 		
 		panel1.setLayout(new FlowLayout());
+		
 		panel1.add(btnBefore);
 		panel1.add(label);
 		panel1.add(btnAfter);
@@ -143,6 +139,9 @@ class Calendarmain extends JFrame implements ActionListener {
 		container.add(scrollPane);
 		
 		table = new JTable();
+		table.getTableHeader().setFont(new Font("D2Coding", Font.PLAIN, 20));
+		table.setFont(new Font("D2Coding", Font.PLAIN, 20));
+		table.setRowHeight(25);
 		tableModel = new DefaultTableModel(null, COLUMN_NAMES);
 		table.setModel(tableModel);
 		scrollPane.setViewportView(table);
@@ -185,7 +184,7 @@ class Calendarmain extends JFrame implements ActionListener {
 		for (int i = 0; i < buttons.length; i++) {
 			buttonGroup.add(buttons[i]);
 		}
-				
+
 	}
 	
 	private void createRentalInfo() {

@@ -47,7 +47,7 @@ public class BlogCreateFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void showBlogCreateFrame(Component parent,CreateNotify app) {
+	public static void showBlogCreateFrame(Component parent, CreateNotify app) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -82,7 +82,7 @@ public class BlogCreateFrame extends JFrame {
 		}
 		setBounds(x, y, 452, 562);
 		
-		if (parent == null ) {
+		if (parent == null) {
 			setLocationRelativeTo(null); // 화면 중앙에서 JFrame을 띄움.
 		}
 		

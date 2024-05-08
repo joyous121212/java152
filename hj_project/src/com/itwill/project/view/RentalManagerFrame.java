@@ -14,38 +14,46 @@ import com.itwill.project.model.Rental;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.util.List;
 
 import javax.swing.JTable;
+import java.awt.SystemColor;
+import javax.swing.JLabel;
+import java.awt.Color;
+import java.awt.Component;
 
 public class RentalManagerFrame extends JFrame {
 	private static final String[] COLUMN_NAMES = {
 			"번호", "이름", "장르", "내용", "예약 시간"
 	};
+	
+	private String frameImage = "image/background.jpg";
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JButton btnDetail;
 	private JButton btnSave;
-	private JButton btnCancel;
 	private JScrollPane scrollPane;
 	private JTable table;
-	private JPanel panel;
 	private DefaultTableModel tableModel;
 	
 	private RentalDao dao = RentalDao.getInstance();
 	private JButton btnDelete;
+	private JLabel lblImage;
+	
+	private Component parent;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void showRentalManagerFrame() {
+	public static void showRentalManagerFrame(Component parent) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RentalManagerFrame frame = new RentalManagerFrame();
+					RentalManagerFrame frame = new RentalManagerFrame(parent);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -57,49 +65,72 @@ public class RentalManagerFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RentalManagerFrame() {
+	public RentalManagerFrame(Component parent) {
+		this.parent = parent;
+		
 		initialize();
 		initializeTable();
 	}
 	public void initialize() {
 		setTitle("관리자 페이지");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		
+		int x = 0;
+		int y = 0;
+		if (parent != null) {
+			x = parent.getX();
+			y = parent.getY();
+		}
+		setBounds(x, y, 477, 547);
+		
+		if (parent == null) {
+			setLocationRelativeTo(null);
+		}
+		
 		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.menu);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.setLayout(null);
 		
 		scrollPane = new JScrollPane();
-		contentPane.add(scrollPane, BorderLayout.CENTER);
+		scrollPane.setBounds(5, 5, 452, 428);
+		contentPane.add(scrollPane);
 		
 		table = new JTable();
+		table.getTableHeader().setFont(new Font("D2Coding", Font.PLAIN, 20));
+		table.setFont(new Font("D2Coding", Font.PLAIN, 20));
+		table.setRowHeight(25);
 		tableModel = new DefaultTableModel(null, COLUMN_NAMES);
 		table.setModel(tableModel);
 		scrollPane.setViewportView(table);
 		
-		panel = new JPanel();
-		contentPane.add(panel, BorderLayout.SOUTH);
-		
 		btnDetail = new JButton("상세보기");
+		btnDetail.setBackground(new Color(226, 217, 200));
+		btnDetail.setBounds(94, 443, 105, 46);
+		contentPane.add(btnDetail);
 		btnDetail.addActionListener((e) -> showDetailsFrame());
-		btnDetail.setFont(new Font("D2Coding", Font.PLAIN, 18));
-		panel.add(btnDetail);
+		btnDetail.setFont(new Font("D2Coding", Font.PLAIN, 15));
 		
 		btnDelete = new JButton("삭제");
+		btnDelete.setBackground(new Color(226, 217, 200));
+		btnDelete.setBounds(211, 443, 69, 46);
+		contentPane.add(btnDelete);
 		btnDelete.addActionListener((e) -> deleteRental());
-		btnDelete.setFont(new Font("D2Coding", Font.PLAIN, 18));
-		panel.add(btnDelete);
+		btnDelete.setFont(new Font("D2Coding", Font.PLAIN, 15));
 		
 		btnSave = new JButton("확인");
-		btnSave.setFont(new Font("D2Coding", Font.PLAIN, 18));
-		panel.add(btnSave);
+		btnSave.addActionListener((e) -> dispose());
+		btnSave.setBackground(new Color(226, 217, 200));
+		btnSave.setBounds(292, 443, 69, 46);
+		contentPane.add(btnSave);
+		btnSave.setFont(new Font("D2Coding", Font.PLAIN, 15));
 		
-		btnCancel = new JButton("취소");
-		btnCancel.addActionListener((e) -> dispose());
-		btnCancel.setFont(new Font("D2Coding", Font.PLAIN, 18));
-		panel.add(btnCancel);
+		
+		lblImage = new JLabel(new ImageIcon(frameImage));
+		lblImage.setBounds(0, 0, 470, 508);
+		contentPane.add(lblImage);
 	}
 	
 	private void showDetailsFrame() {
@@ -110,7 +141,7 @@ public class RentalManagerFrame extends JFrame {
 			return;
 		}
 		Integer id = (Integer) tableModel.getValueAt(index, 0);
-		RentalManagerDetailsFrame.showRentalManagerDetailsFrame(id);
+		RentalManagerDetailsFrame.showRentalManagerDetailsFrame(RentalManagerFrame.this, id);
 	}
 
 	private void deleteRental() {

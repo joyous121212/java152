@@ -24,8 +24,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
+import java.awt.SystemColor;
+import java.awt.Color;
+import java.awt.Component;
 
 public class RentalManagerDetailsFrame extends JFrame {
 
@@ -33,6 +37,8 @@ public class RentalManagerDetailsFrame extends JFrame {
 			"날짜", "시간"
 	};
 
+	private String frameImage = "image/background.jpg";
+	
 	private static final long serialVersionUID = 1L;
 	
 	private RentalDao dao = RentalDao.getInstance();
@@ -53,22 +59,26 @@ public class RentalManagerDetailsFrame extends JFrame {
 	private JRadioButton rdbtnReject;
 	private JRadioButton rdbtnApproval;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private JButton btnCancel;
 	private JButton btnConfirm;
 	private JLabel lblConfirm;
 	private JLabel lblId;
 	private JTextField textId;
 	private JTable tableDateTime;
 	private DefaultTableModel tableModel;
+	private JButton btnDelete;
+	private JButton btnCancel;
+	private JLabel lblImage;
+	
+	private Component parent;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void showRentalManagerDetailsFrame(int rentalId) {
+	public static void showRentalManagerDetailsFrame(Component parent, int rentalId) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RentalManagerDetailsFrame frame = new RentalManagerDetailsFrame(rentalId);
+					RentalManagerDetailsFrame frame = new RentalManagerDetailsFrame(parent, rentalId);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -80,7 +90,8 @@ public class RentalManagerDetailsFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RentalManagerDetailsFrame(int rentalId) {
+	public RentalManagerDetailsFrame(Component parent, int rentalId) {
+		this.parent = parent;
 		this.rentalId = rentalId;
 		
 		initialize();
@@ -91,8 +102,21 @@ public class RentalManagerDetailsFrame extends JFrame {
 	public void initialize() {
 		setTitle("상세보기");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 447, 838);
+		
+		int x = 0;
+		int y = 0;
+		if (parent != null) {
+			x = parent.getX(); // 부모 컴포넌트의 x 좌표
+			y = parent.getY(); // 부모 컴포넌트의 y 좌표
+		}
+		setBounds(x, y, 447, 838);
+		
+		if (parent == null) {
+			setLocationRelativeTo(null); // 화면 중앙에서 JFrame을 띄움.
+		}
+		
 		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.menu);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -104,6 +128,7 @@ public class RentalManagerDetailsFrame extends JFrame {
 		contentPane.add(lblName);
 		
 		textName = new JTextField();
+		textName.setBackground(new Color(211, 198, 173));
 		textName.setEditable(false);
 		textName.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		textName.setBounds(107, 58, 312, 40);
@@ -116,6 +141,7 @@ public class RentalManagerDetailsFrame extends JFrame {
 		contentPane.add(lblGenre);
 		
 		textGenre = new JTextField();
+		textGenre.setBackground(new Color(211, 198, 173));
 		textGenre.setEditable(false);
 		textGenre.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		textGenre.setColumns(10);
@@ -155,6 +181,7 @@ public class RentalManagerDetailsFrame extends JFrame {
 		contentPane.add(lblCreatedTime);
 		
 		textCreatedTime = new JTextField();
+		textCreatedTime.setBackground(new Color(211, 198, 173));
 		textCreatedTime.setEditable(false);
 		textCreatedTime.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		textCreatedTime.setColumns(10);
@@ -167,26 +194,24 @@ public class RentalManagerDetailsFrame extends JFrame {
 		contentPane.add(lblConfirm);
 		
 		rdbtnApproval = new JRadioButton("승인");
+		rdbtnApproval.setBackground(new Color(226, 217, 200));
 		buttonGroup.add(rdbtnApproval);
 		rdbtnApproval.setFont(new Font("D2Coding", Font.PLAIN, 18));
 		rdbtnApproval.setBounds(8, 700, 79, 23);
 		contentPane.add(rdbtnApproval);
 		
 		rdbtnReject = new JRadioButton("불가");
+		rdbtnReject.setBackground(new Color(226, 217, 200));
 		buttonGroup.add(rdbtnReject);
 		rdbtnReject.setFont(new Font("D2Coding", Font.PLAIN, 18));
 		rdbtnReject.setBounds(95, 700, 79, 23);
 		contentPane.add(rdbtnReject);
 		
-		btnCancel = new JButton("취소");
-		btnCancel.setFont(new Font("D2Coding", Font.PLAIN, 24));
-		btnCancel.setBounds(311, 735, 108, 52);
-		contentPane.add(btnCancel);
-		
-		btnConfirm = new JButton("확인");
+		btnConfirm = new JButton("업데이트");
+		btnConfirm.setBackground(new Color(226, 217, 200));
 		btnConfirm.addActionListener((e) -> updateRental());
-		btnConfirm.setFont(new Font("D2Coding", Font.PLAIN, 24));
-		btnConfirm.setBounds(185, 735, 108, 52);
+		btnConfirm.setFont(new Font("D2Coding", Font.PLAIN, 20));
+		btnConfirm.setBounds(167, 737, 132, 52);
 		contentPane.add(btnConfirm);
 		
 		lblId = new JLabel("번호");
@@ -195,17 +220,72 @@ public class RentalManagerDetailsFrame extends JFrame {
 		contentPane.add(lblId);
 		
 		textId = new JTextField();
+		textId.setBackground(new Color(211, 198, 173));
 		textId.setEditable(false);
 		textId.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		textId.setColumns(10);
 		textId.setBounds(107, 10, 312, 40);
 		contentPane.add(textId);
+		
+		btnDelete = new JButton("삭제");
+		btnDelete.setBackground(new Color(226, 217, 200));
+		btnDelete.addActionListener((e) -> deleteDateTime());
+		btnDelete.setFont(new Font("D2Coding", Font.PLAIN, 24));
+		btnDelete.setBounds(44, 737, 108, 52);
+		contentPane.add(btnDelete);
+		
+		btnCancel = new JButton("취소");
+		btnCancel.setBackground(new Color(226, 217, 200));
+		btnCancel.addActionListener((e) -> dispose());
+		btnCancel.setFont(new Font("D2Coding", Font.PLAIN, 24));
+		btnCancel.setBounds(311, 737, 108, 52);
+		contentPane.add(btnCancel);
+		
+		lblImage = new JLabel(new ImageIcon(frameImage));
+		lblImage.setBounds(0, 0, 431, 799);
+		contentPane.add(lblImage);
 	}
 	
+	private void deleteDateTime() {
+		int index = tableDateTime.getSelectedRow();
+		if (index == -1) {
+			JOptionPane.showMessageDialog(contentPane, "삭제할 행을 먼저 선택하세요.", "경고", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		int confirm = JOptionPane.showConfirmDialog(contentPane, "정말 삭제할까요?", "삭제 확인", JOptionPane.YES_NO_OPTION);
+		if (confirm == JOptionPane.YES_OPTION) {
+			String date = (String) tableModel.getValueAt(index, 0);
+			String time = (String) tableModel.getValueAt(index, 1);
+			
+			// DAO 메서드 호출.
+			int result = dao.deleteInfo(date, time);
+			if (result == 1) {
+				initializeInfo();
+				JOptionPane.showMessageDialog(contentPane, "삭제 성공!");
+			} else {
+				JOptionPane.showMessageDialog(contentPane, "삭제 실패!");
+			}
+		}
+	}
+	
+	private void resetTable(List<RentalInfo> rentalInfo) {
+		tableModel = new DefaultTableModel(null, COLUMN_NAMES);
+		for(RentalInfo r : rentalInfo) {
+			Object[] row = {
+					r.getDate(),
+					r.getTime()
+			};
+			tableModel.addRow(row);
+		}
+		tableDateTime.setModel(tableModel);
+	}
+
 	private void initializeInfo() {
 		Rental rental = dao.read(rentalId);
 		List<RentalInfo> rentalInfo = new ArrayList<RentalInfo>();
 		rentalInfo = dao.readInfo(rentalId);
+		
 		
 		if(rental == null) return;
 		
@@ -215,16 +295,11 @@ public class RentalManagerDetailsFrame extends JFrame {
 		textAreaContent.setText(rental.getContent());
 		textCreatedTime.setText(rental.getCreatedTime().toString());
 		
-		System.out.println(rentalInfo);
-		for (RentalInfo r : rentalInfo) {
-			Object[] row = {
-					r.getDate(),
-					r.getTime()
-			};
-			tableModel.addRow(row);
-		}		
-		tableDateTime.setModel(tableModel);
+		resetTable(rentalInfo);
+		
 	}
+	
+	
 	
 	private void updateRental() {
 		String content = textAreaContent.getText();

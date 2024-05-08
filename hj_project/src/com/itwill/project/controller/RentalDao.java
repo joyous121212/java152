@@ -274,6 +274,43 @@ public class RentalDao {
 			
 			return result;
 		}
+	// searchEmailPw 메서드에서 사용할 SQL:
+	// select * from rentals where email = ? and password = ?;
+	private static final String SQL_SELECT_BY_EMAILPW = String.format(
+			"select * from %s where %s = ? and %s = ?", 
+			TBL_RENTALS, COL_EMAIL, COL_PASSWORD);
+	
+	/** 
+	 * 이메일과 패스워드 같은 값 검색하기
+	 * @param 이메일
+	 * @param 패스워드
+	 * @return 검색결과 리스트. 검색 결과 없으면 빈 리스트.
+	 */
+	public List<Rental> searchEmailPw(String email, String pw) {
+		List<Rental> result = new ArrayList<Rental>();
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			stmt = conn.prepareStatement(SQL_SELECT_BY_EMAILPW);
+			stmt.setString(1, email);
+			stmt.setString(2, pw);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				Rental rental = makeRentalFromResultSet(rs);
+				result.add(rental);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeResources(conn, stmt, rs);
+		}
+		return result;
+		
+	}
 	
 	// 이메일에 검색 결과가 있는 결과:
 	// select * rentals where email = ?
@@ -417,6 +454,38 @@ public class RentalDao {
 		return result;
 	}
 	
+	// deleteInfo(String date, String time) 메서드에서 사용할 SQL: delete from rental_info where d = ? and tt = ?
+		private static final String SQL_DELETE_RENTAL_INFO = String.format(
+				"delete from %s where %s = ? and %s = ?",
+				TBL_RENTAL_INFO, COL_DATE, COL_TIME);
+		
+		/** 테이블에서 RENTALS에서 고유키 id에 해당하는 레코드를 삭제.
+		 * @param id 삭제하려는 레코드의 고유키
+		 * @return 테이블에서 삭제된 행의 개수.
+		 */
+		public int deleteInfo(String date, String time) {
+			int result = 0;
+			
+			Connection conn = null;
+			PreparedStatement stmt = null;
+			 
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				stmt = conn.prepareStatement(SQL_DELETE_RENTAL_INFO);
+				stmt.setString(1, date);
+				stmt.setString(2, time);
+				result = stmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				closeResources(conn, stmt);
+			}
+			
+			
+			return result;
+		}
+	
 	// maxId 메서드에서 사용할 SQL: select max(id) from rentals
 	private static final String SQL_MAXID = String.format(
 			"select * from %s where %s >= (select max(%s) from %s)", 
@@ -521,18 +590,18 @@ public class RentalDao {
 		}
 		
 		// 아이디로 날짜, 시간 검색하기
-		// select dd, tt from rental_info where id = (select id from rentals where id = ?);
+		// select * from rental_info where id in (select id from rentals where email = ? and password = ?);
 		private static final String SQL_SELECT_DATE_TIME = String.format(
-				"select %s, %s from %s where %s = (select %s from %s where %s = ?)",
-				COL_DATE, COL_TIME, TBL_RENTAL_INFO, COL_ID_INFO, COL_ID, TBL_RENTALS, COL_ID);
+				"select * from %s where %s in (select %s from %s where %s = ? and %s = ?) order by %s",
+				TBL_RENTAL_INFO, COL_ID_INFO, COL_ID, TBL_RENTALS, COL_EMAIL, COL_PASSWORD, COL_ID_INFO);
 
 		/**
-		 * 아이디 전달받아서, 해당 SQL 문장을 실행하고 그 결과를 리턴.
+		 * 이메일, 비밀번호 전달받아서, 해당 SQL 문장을 실행하고 그 결과를 리턴.
 		 * 
 		 * @param id 이메일, 비밀번호 일치하면 그 값의 아이디
 		 * @return 검색 결과 리스트. 검색 결과가 없으면 빈 리스트.
 		 */
-		public List<RentalInfo> searchDateTime(int id) {
+		public List<RentalInfo> searchDateTime(String email, String password) {
 			List<RentalInfo> result = new ArrayList<RentalInfo>();
 
 			Connection conn = null;
@@ -542,7 +611,8 @@ public class RentalDao {
 			try {
 				conn = DriverManager.getConnection(URL, USER, PASSWORD);
 				stmt = conn.prepareStatement(SQL_SELECT_DATE_TIME);
-				stmt.setInt(1, id);
+				stmt.setString(1, email);
+				stmt.setString(2, password);
 				rs = stmt.executeQuery();
 				while (rs.next()) {
 					RentalInfo rentalInfo = makeRentalInfoFromResultSet(rs);
@@ -590,6 +660,8 @@ public class RentalDao {
 	        return result;
 			
 		}
+		
+		
 
 
 }

@@ -14,9 +14,11 @@ public class CalendarFunction {
 		year = cal.get(Calendar.YEAR);
 		month = cal.get(Calendar.MONTH);
 	}
+	
 	public void setButtons(JToggleButton[] buttons) {
 		this.buttons = buttons;
 	}
+	
 	// Label -> 0000년 00월 문자열 리턴
 	public String getCalText() {
 		return year + "년" + month + "월";
@@ -24,14 +26,14 @@ public class CalendarFunction {
 	//버튼 날짜 출력
 	public void calSet() {
 		// calendar 객체 날짜 1일 설정
-		cal.set(year, month -1, 1);
+		cal.set(year, month - 1, 1);
 		
 		// 그 달의 1일 요일 수 
 		int firstDay = cal.get(Calendar.DAY_OF_WEEK);
 		// 요일 수 1일 시작 배열 0부터 시작
 		firstDay--;
 		
-		for (int i = 0; i <= cal.getActualMaximum(cal.DATE); i++) {
+		for (int i = 1; i <= cal.getActualMaximum(cal.DATE); i++) {
 			// buttons[0] ~ [6] : 일~ 토
 			// buttons[7] ~ : 날짜 출력
 			buttons[6 + firstDay + i].setText(String.valueOf(i));

@@ -22,8 +22,13 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.JPanel;
+import java.awt.SystemColor;
+import java.awt.Color;
 
 public class RentalMain implements CreateNotify {
+	
+	private String backgroundImage = "image/background.jpg";
+	private String theaterIcon = "image\\theater icon.png";
 
 	private JFrame frame;
 	private JButton btnRegister;
@@ -32,8 +37,7 @@ public class RentalMain implements CreateNotify {
 	
 	private RentalDao dao = RentalDao.getInstance();
 	private JLabel lblTitle;
-	String theaterIcon = "image\\theater icon.png";
-	private JPanel panelImage;
+	private JLabel lblImage;
 	
 	
 
@@ -72,6 +76,7 @@ public class RentalMain implements CreateNotify {
 		frame.getContentPane().setLayout(null);
 		
 		btnRegister = new JButton("대관 신청");
+		btnRegister.setBackground(new Color(211, 198, 173));
 		btnRegister.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -82,9 +87,10 @@ public class RentalMain implements CreateNotify {
 		btnRegister.setBounds(12, 170, 398, 69);
 		frame.getContentPane().add(btnRegister);
 		btnCheck = new JButton("신청 내역 확인");
+		btnCheck.setBackground(new Color(211, 198, 173));
 		btnCheck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RentalCheckDialog.showRentalCheckDialog();
+				RentalCheckDialog.showRentalCheckDialog(frame);
 			}
 		});
 		btnCheck.setFont(new Font("D2Coding", Font.PLAIN, 30));
@@ -98,25 +104,24 @@ public class RentalMain implements CreateNotify {
 		frame.getContentPane().add(lblTitle);
 		
 		btnManager = new JButton("관리자");
+		btnManager.setBackground(new Color(211, 198, 173));
 		btnManager.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RentalManagerDialog.showRentalManagerDialog();
+				RentalManagerDialog.showRentalManagerDialog(frame);
 			}
 		});
 		btnManager.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		btnManager.setBounds(251, 367, 159, 43);
 		frame.getContentPane().add(btnManager);
 		
-		
-		panelImage = new JPanel();
-		panelImage.setBounds(0, 0, 422, 432);
-		frame.getContentPane().add(panelImage);
-		panelImage.setLayout(null);
+		lblImage = new JLabel(new ImageIcon(backgroundImage));
+		lblImage.setBounds(0, 0, 422, 432);
+		frame.getContentPane().add(lblImage);
 	}
 
 	@Override
 	public void notifyCreateSuccess() {
 		// 테이블에 update 성공했을 때 RentalDetailFrame이 호출하는 메서드
-		JOptionPane.showMessageDialog(frame, "테이블에 저장 성공!");
+		JOptionPane.showMessageDialog(frame, "저장 성공!");
 	}
 }

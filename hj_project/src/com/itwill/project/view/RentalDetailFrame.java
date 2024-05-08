@@ -19,8 +19,11 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;
+import java.awt.SystemColor;
+import java.awt.Color;
 
 public class RentalDetailFrame extends JFrame {
 	
@@ -32,6 +35,7 @@ public class RentalDetailFrame extends JFrame {
 	
 	private RentalDao dao = RentalDao.getInstance();
 	private CreateNotify app;
+	private String frameImage = "image/background.jpg";
 	
 	private Component parent;
 	private JPanel contentPane;
@@ -52,6 +56,7 @@ public class RentalDetailFrame extends JFrame {
 	private JButton btnBefore;
 	private JButton btnConfirm;
 	private JScrollPane scrollPane;
+	private JLabel lblImage;
 
 	/**
 	 * Launch the application.
@@ -97,6 +102,7 @@ public class RentalDetailFrame extends JFrame {
 		}
 		
 		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.menu);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -149,48 +155,72 @@ public class RentalDetailFrame extends JFrame {
 		scrollPane.setViewportView(textContent);
 		
 		rbPlay = new JRadioButton("연극");
+		rbPlay.setBackground(new Color(226, 217, 200));
 		rbPlay.addActionListener((e) -> handleRadioButtonClick(e));
 		buttonGroup.add(rbPlay);
-		rbPlay.setBounds(12, 365, 76, 48);
+		rbPlay.setBounds(12, 365, 81, 48);
 		contentPane.add(rbPlay);
 		
 		rbDance = new JRadioButton("무용");
+		rbDance.setBackground(new Color(226, 217, 200));
 		rbDance.addActionListener((e) -> handleRadioButtonClick(e));
 		buttonGroup.add(rbDance);
-		rbDance.setBounds(92, 365, 76, 48);
+		rbDance.setBounds(92, 365, 81, 48);
 		contentPane.add(rbDance);
 		
 		rbMusic = new JRadioButton("음악");
+		rbMusic.setBackground(new Color(226, 217, 200));
 		rbMusic.addActionListener((e) -> handleRadioButtonClick(e));
 		buttonGroup.add(rbMusic);
-		rbMusic.setBounds(172, 365, 76, 48);
+		rbMusic.setBounds(172, 365, 81, 48);
 		contentPane.add(rbMusic);
 		
 		rbTradition = new JRadioButton("전통예술");
+		rbTradition.setBackground(new Color(226, 217, 200));
 		rbTradition.addActionListener((e) -> handleRadioButtonClick(e));
 		buttonGroup.add(rbTradition);
-		rbTradition.setBounds(252, 365, 76, 48);
+		rbTradition.setBounds(252, 365, 95, 48);
 		contentPane.add(rbTradition);
 		
 		rbEtc = new JRadioButton("기타");
+		rbEtc.setBackground(new Color(226, 217, 200));
 		rbEtc.addActionListener((e) -> handleRadioButtonClick(e));
 		buttonGroup.add(rbEtc);
 		rbEtc.setBounds(346, 365, 76, 48);
 		contentPane.add(rbEtc);
 		
 		btnBefore = new JButton("이전");
-		btnBefore.addActionListener((e) -> dispose());
+		btnBefore.setBackground(new Color(226, 217, 200));
+		btnBefore.addActionListener((e) -> cancelDetail());
 		btnBefore.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		btnBefore.setBounds(150, 419, 130, 46);
 		contentPane.add(btnBefore);
 		
 		btnConfirm = new JButton("완료");
+		btnConfirm.setForeground(new Color(0, 0, 0));
+		btnConfirm.setBackground(new Color(226, 217, 200));
 		btnConfirm.addActionListener((e) -> createNewRental());
 		btnConfirm.setFont(new Font("D2Coding", Font.PLAIN, 24));
 		btnConfirm.setBounds(292, 419, 130, 46);
 		contentPane.add(btnConfirm);
+		
+		lblImage = new JLabel(new ImageIcon(frameImage));
+		lblImage.setBounds(0, 0, 434, 488);
+		contentPane.add(lblImage);
 	}
 	
+	private void cancelDetail() {
+		int confirm = JOptionPane.showConfirmDialog(
+				contentPane, 
+				"작성했던 내용은 저장되지 않습니다.\n이전으로 돌아가시겠습니까?", 
+				"알림", 
+				JOptionPane.YES_NO_OPTION);
+		if (confirm ==JOptionPane.YES_OPTION) {
+			dispose();
+		}
+		return;
+	}
+
 	private void handleRadioButtonClick(ActionEvent event) {
 		JRadioButton rb = (JRadioButton) event.getSource();
 		String text = rb.getText();
