@@ -12,7 +12,7 @@ public class CalendarFunction {
 	
 	public CalendarFunction() {
 		year = cal.get(Calendar.YEAR);
-		month = cal.get(Calendar.MONTH);
+		month = cal.get(Calendar.MONTH) + 1;
 	}
 	
 	public void setButtons(JToggleButton[] buttons) {

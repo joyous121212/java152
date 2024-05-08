@@ -2,6 +2,7 @@ package com.itwill.project.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -41,7 +42,7 @@ public class RentalCalendar  {
 	public static void showSwingCalendar() {
 		calendarmain = new Calendarmain();
 		calendarmain.setBackground(SystemColor.info);
-		calendarmain.getContentPane().setBackground(SystemColor.menu);
+		calendarmain.getContentPane().setBackground(new Color(226, 217, 200));
 		calendarmain.setBounds(100, 100, 900, 400);
 		calendarmain.setTitle("날짜 및 시간 선택");
 		calendarmain.getContentPane().setLayout(null);
@@ -92,7 +93,6 @@ class Calendarmain extends JFrame implements ActionListener {
 	
 	
 	public JLabel label = new JLabel("00년 0월");
-	
 	public JToggleButton[] buttons = new JToggleButton[49];
 	String[] dayNames = {"Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"};
 	CalendarFunction cf = new CalendarFunction();
@@ -113,6 +113,7 @@ class Calendarmain extends JFrame implements ActionListener {
 		container.add("Center", panel2);
 		
 		panel1.setLayout(new FlowLayout());
+		panel1.setBackground(new Color(226, 217, 200));
 		
 		panel1.add(btnBefore);
 		panel1.add(label);
@@ -120,12 +121,15 @@ class Calendarmain extends JFrame implements ActionListener {
 		
 		Font font = new Font("D2Coding", Font.BOLD, 18);
 		btnAfter.setFont(font);
+		btnAfter.setBackground(new Color(211, 198, 173));
 		btnBefore.setFont(font);
+		btnBefore.setBackground(new Color(211, 198, 173));
 		label.setFont(font);
 		
 		btnAdd = new JButton("추가");
 		btnAdd.addActionListener((e) -> addNewDateTime());
 		btnAdd.setBounds(780, 20, 97, 23);
+		btnAdd.setBackground(new Color(211, 198, 173));
 		container.add(btnAdd);
 		
 		comboBox = new JComboBox<>();
@@ -152,25 +156,30 @@ class Calendarmain extends JFrame implements ActionListener {
 		btnConfirm.addActionListener((e) -> createRentalInfo());
 		btnConfirm.setFont(new Font("D2Coding", Font.PLAIN, 20));
 		btnConfirm.setBounds(656, 303, 97, 43);
+		btnConfirm.setBackground(new Color(211, 198, 173));
 		container.add(btnConfirm);
 		
 		btnCancel = new JButton("취소");
 		btnCancel.setFont(new Font("D2Coding", Font.PLAIN, 20));
 		btnCancel.setBounds(767, 303, 97, 43);
+		btnCancel.setBackground(new Color(211, 198, 173));
 		container.add(btnCancel);
 		
 		panel2 = new JPanel();
 		panel2.setBounds(0, 0, 504, 322);
+		panel2.setBackground(new Color(226, 217, 200));
 		container.add(panel2);
 		
 		System.out.println(buttons.toString());
 		
 		panel3.setLayout(new GridLayout(7, 7, 5, 5));
+		panel3.setBackground(new Color(226, 217, 200));
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i] = new JToggleButton();
 			panel3.add(buttons[i]);
 			
 			buttons[i].setFont(font);
+			buttons[i].setBackground(new Color(211, 198, 173));
 			
 			if(i<7) buttons[i].setText(dayNames[i]);
 			
@@ -209,15 +218,6 @@ class Calendarmain extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(container, "예약 실패");
 		}		
 	}
-
-	private void initializeTable() {
-		List<RentalInfo> rentalInfo = dao.readInfo();
-		resetTable(rentalInfo);
-	}
-	
-	private void resetTable(List<RentalInfo> rentalInfo) {
-		
-	}
 	
 	
 	// 선택 된 날짜, 시간 SQL 테이블에 없으면 JTable, SQL테이블 에 입력, 
@@ -245,7 +245,6 @@ class Calendarmain extends JFrame implements ActionListener {
 		
 		
 		List<RentalInfo> rentalInfo = dao.searchDate(dd);
-		List<RentalInfo> tt = dao.searchTime(time);
 		
 		// 날짜, 시간이 같은 경우
 		
